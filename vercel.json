@@ -1,7 +1,4 @@
 {
-  "builds": [
-    {"src": "/main.py", "use": "@now/python3"}
-  ],
   "routes": [
     {"src": "/(.*)", "dest": "main.py"}
   ]
