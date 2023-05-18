@@ -7,3 +7,6 @@ share
 pyvenv.cfg
 .history
 .env
+*.db
+*.db-journal
+*.sqlite
