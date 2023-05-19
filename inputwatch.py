@@ -13,8 +13,6 @@ cursor = connection.cursor()
 cursor.execute("CREATE TABLE IF NOT EXISTS transcripts (audio_file TEXT, transcript TEXT, status TEXT)")
 connection.commit()
 
-input_dir_content = os.listdir(os.getenv('INPUT_FOLDER'))
-
 def add_to_db(file):
   if file.endswith('.mp3'):
     cursor.execute("INSERT INTO transcripts (audio_file, transcript, status) VALUES (?, ?, ?)", (file, '', 'pending'))
