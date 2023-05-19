@@ -9,28 +9,31 @@ load_dotenv()
 
 connection = sqlite3.connect("transcripts.sqlite")
 cursor = connection.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS transcripts (audio_file TEXT, transcript TEXT)")
-cursor.execute("INSERT INTO transcripts VALUES ('test_file.mp3', 'blablabla')")
+cursor.execute("CREATE TABLE IF NOT EXISTS transcripts (audio_file TEXT, transcript TEXT, status TEXT)")
 connection.commit()
-rows = cursor.execute("SELECT audio_file, transcript FROM transcripts").fetchall()
-print(rows)
+# rows = cursor.execute("SELECT audio_file, transcript FROM transcripts").fetchall()
+# print(rows)
 
-dircontent = os.listdir(os.getenv('INPUT_FOLDER'))
+input_dir_content = os.listdir(os.getenv('INPUT_FOLDER'))
 
-def do_something(scheduler): 
-    # schedule the next call first
-    scheduler.enter(5, 1, do_something, (scheduler,))
-    current_files = os.listdir(os.getenv('INPUT_FOLDER'))
-    new_files = list(set(globals()['dircontent']).symmetric_difference(set(current_files)))
-    globals()['dircontent'] = current_files
-    print(new_files)
+def check_dir(scheduler): 
+  scheduler.enter(5, 1, check_dir, (scheduler,))
+  current_files = os.listdir(os.getenv('INPUT_FOLDER'))
+  new_files = list(set(globals()['input_dir_content']).symmetric_difference(set(current_files)))
+  globals()['input_dir_content'] = current_files
 
-    # dircontent = os.listdir(os.getenv('INPUT_FOLDER'))
+  if len(new_files) > 0:
+    for file in new_files:
+      if file.endswith('.mp3'):
+        print(file, 'added to database')
+        cursor.execute("INSERT INTO transcripts (audio_file, transcript, status) VALUES (?, ?, ?)", (file, '', 'pending'))
+        connection.commit()
+    # input_dir_content = os.listdir(os.getenv('INPUT_FOLDER'))
 
     # then do your stuff
 
 my_scheduler = sched.scheduler(time.time, time.sleep)
-my_scheduler.enter(5, 1, do_something, (my_scheduler,))
+my_scheduler.enter(5, 1, check_dir, (my_scheduler,))
 my_scheduler.run()
 
 
@@ -38,5 +41,5 @@ my_scheduler.run()
 app = FastAPI()
 @app.get("/")
 async def root():
- return {"dircontetn":dircontent}
+ return {"dircontetn":input_dir_content}
  
