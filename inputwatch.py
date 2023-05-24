@@ -10,12 +10,13 @@ load_dotenv()
 
 connection = sqlite3.connect("transcripts.sqlite")
 cursor = connection.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS transcripts (audio_file TEXT, transcript TEXT, status TEXT)")
+cursor.execute("CREATE TABLE IF NOT EXISTS transcripts (audio_id TEXT UNIQUE, audio_file TEXT, transcript TEXT, status TEXT)")
 connection.commit()
 
 def add_to_db(file):
   if file.endswith('.mp3'):
-    cursor.execute("INSERT INTO transcripts (audio_file, transcript, status) VALUES (?, ?, ?)", (file, '', 'pending'))
+    audio_id = os.path.splitext(file)[0]
+    cursor.execute("INSERT INTO transcripts (audio_id, audio_file, transcript, status) VALUES (?, ?, ?, ?) ON CONFLICT(audio_id) DO UPDATE SET audio_file = excluded.audio_file, transcript = excluded.transcript", (audio_id, file, '', 'pending'))
     connection.commit()
     print(file, 'added to database')
 
