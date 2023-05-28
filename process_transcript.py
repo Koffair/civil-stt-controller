@@ -29,6 +29,14 @@ def process_transcript(audio_id, transcript, audio_url):
       }
     }
   """
+
+  mutation_publish_episode = """
+    mutation publishEpisode($episodeId: ID) {
+      publishEpisode(where: { id: $episodeId }, to: PUBLISHED) {
+        id
+      }
+    }
+  """
   
   url='https://api-eu-central-1-shared-euc1-02.hygraph.com/v2/clfqmnhz406nv01t7fcc9azhz/master'
   token = os.getenv("HYGRAPH_TOKEN")
@@ -43,3 +51,6 @@ def process_transcript(audio_id, transcript, audio_url):
   r = requests.post(url, json={"query": mutation_add_episode, "variables": variables}, headers=headers)
   json_data = r.json()
   print(json_data)
+  episode_id = json_data['data']['createEpisode']['id']
+  rp = requests.post(url, json={"query": mutation_publish_episode, "variables": {"episodeId": episode_id}}, headers=headers)
+  print(rp.json())
