@@ -28,12 +28,16 @@ def update_transcript_in_db(audio_id, transcript):
   connection.commit()
   print(audio_id, 'transcript updated in database')
 
+def get_audio_url(audio_id):
+  return os.getenv('AUDIO_BASE_URL') + '/' + audio_id + '.mp3'
+
 def process_file(file):
   if file.endswith('.txt'):
     audio_id = get_audio_id(file)
     transcript = read_textfile(file)
+    audio_url = get_audio_url(audio_id)
     update_transcript_in_db(audio_id, transcript)
-    process_transcript(audio_id, transcript)
+    process_transcript(audio_id, transcript, audio_url)
 
 def remove_text_file(file):
   if file.endswith('.txt'):

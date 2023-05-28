@@ -8,7 +8,7 @@
     "method": "POST",
     "sortNum": 0,
     "created": "2023-05-24T19:58:14.888Z",
-    "modified": "2023-05-28T10:50:17.060Z",
+    "modified": "2023-05-28T14:23:19.706Z",
     "headers": [
       {
         "name": "Authorization",
@@ -22,8 +22,8 @@
       "raw": "",
       "form": [],
       "graphql": {
-        "query": "mutation CreateEpisode($transcript: String, $programSlug: String) {\n  createEpisode(data: {\n    transcript: $transcript\n    program: {\n      connect: {\n        slug: $programSlug\n      }\n    }\n  }) {\n    id\n    program {\n      id\n    }\n  }\n}",
-        "variables": " {\n   \"transcript\": \"some transcript\",\n   \"programSlug\": \"117perc\"\n }"
+        "query": "mutation CreateEpisode(\n  $transcript: String,\n  $programSlug: String,\n  $releaseDate: Date,\n  $audioUrl: String,\n) {\n  createEpisode(data: {\n    transcript: $transcript\n    program: {\n      connect: {\n        slug: $programSlug\n      }\n    }\n    releaseDate: $releaseDate,\n    audioUrl: $audioUrl\n  }) {\n    id\n    program {\n      id\n    }\n  }\n}",
+        "variables": " {\n  \"transcript\": \"Barbar\",\n  \"programSlug\": \"117perc\",\n  \"releaseDate\": \"2023-05-05\",\n  \"audioUrl\": \"https://foo.bar\"\n }"
       }
     },
     "auth": {
