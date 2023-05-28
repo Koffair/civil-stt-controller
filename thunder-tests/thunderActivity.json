@@ -1,0 +1,35 @@
+[
+  {
+    "_id": "65bcb50b-0a45-4348-a027-9bd3d786f882",
+    "colId": "history",
+    "containerId": "",
+    "name": "Add episode to hygraph",
+    "url": "https://api-eu-central-1-shared-euc1-02.hygraph.com/v2/clfqmnhz406nv01t7fcc9azhz/master",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2023-05-24T19:58:14.888Z",
+    "modified": "2023-05-28T10:50:17.060Z",
+    "headers": [
+      {
+        "name": "Authorization",
+        "value": "",
+        "isDisabled": true
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "graphql",
+      "raw": "",
+      "form": [],
+      "graphql": {
+        "query": "mutation CreateEpisode($transcript: String, $programSlug: String) {\n  createEpisode(data: {\n    transcript: $transcript\n    program: {\n      connect: {\n        slug: $programSlug\n      }\n    }\n  }) {\n    id\n    program {\n      id\n    }\n  }\n}",
+        "variables": " {\n   \"transcript\": \"some transcript\",\n   \"programSlug\": \"117perc\"\n }"
+      }
+    },
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{HYGRAPH_TOKEN}}"
+    },
+    "tests": []
+  }
+]
