@@ -10,3 +10,4 @@ pyvenv.cfg
 *.db
 *.db-journal
 *.sqlite
+*.pyc
