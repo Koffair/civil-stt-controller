@@ -12,13 +12,14 @@ def mutate(mutation, variables):
   return json_data
 
 
-def create_episode(transcript, program_slug, release_date, audio_url):
+def create_episode(audio_id, program_slug, release_date, audio_url, transcript = ""):
   mutation = """
     mutation CreateEpisode(
       $transcript: String,
       $programSlug: String,
       $releaseDate: Date,
       $audioUrl: String,
+      $audioId: String
     ) {
       createEpisode(data: {
         transcript: $transcript
@@ -28,7 +29,8 @@ def create_episode(transcript, program_slug, release_date, audio_url):
           }
         }
         releaseDate: $releaseDate,
-        audioUrl: $audioUrl
+        audioUrl: $audioUrl,
+        audioId: $audioId
       }) {
         id
         program {
@@ -42,7 +44,8 @@ def create_episode(transcript, program_slug, release_date, audio_url):
     "transcript": transcript,
     "programSlug": program_slug,
     "releaseDate": release_date,
-    "audioUrl": audio_url
+    "audioUrl": audio_url,
+    "audioId": audio_id
   }
   return mutate(mutation, variables)
 
@@ -58,3 +61,32 @@ def publish_episode(episode_id):
     "episodeId": episode_id
   }
   return mutate(mutation, variables)
+
+
+def update_transcript(audio_id, transcript):
+  mutation = """
+    mutation UpdateEpisodeTranscript($audioId: String, $transcript: String){
+      updateEpisode(
+        where: { audioId: $audioId },
+        data: {
+          transcript: $transcript
+        }) {
+        id
+      }
+    }
+  """
+  variables = {
+    "audioId": audio_id,
+    "transcript": transcript
+  }
+  return mutate(mutation, variables)
+
+def gql_create_episode_and_publish(audio_id, program_slug, release_date, audio_url, transcript = ""):
+  data = create_episode(audio_id, program_slug, release_date, audio_url, transcript)
+  episode_id = data['data']['createEpisode']['id']
+  publish_episode(episode_id)
+
+def gql_update_episode_transcript_and_publish(episode_id, transcript):
+  print('gql_update_episode_transcript_and_publish')
+  update_transcript(episode_id, transcript)
+  publish_episode(episode_id)

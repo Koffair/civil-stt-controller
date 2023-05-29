@@ -1,27 +1,22 @@
 # main.py
 from dotenv import load_dotenv
 import os
-import sqlite3
 import sched, time
 import shutil
 from checkdir import check_dir
+from db_service import add_episode_to_db
+from functions import get_audio_metadata
+from graphql_service import gql_create_episode_and_publish
 
 load_dotenv()
 
-connection = sqlite3.connect("transcripts.sqlite")
-cursor = connection.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS transcripts (audio_id TEXT UNIQUE, audio_file TEXT, transcript TEXT, status TEXT)")
-connection.commit()
 
-def add_to_db(file):
-  if file.endswith('.mp3'):
-    audio_id = os.path.splitext(file)[0]
-    cursor.execute("INSERT INTO transcripts (audio_id, audio_file, transcript, status) VALUES (?, ?, ?, ?) ON CONFLICT(audio_id) DO UPDATE SET audio_file = excluded.audio_file, transcript = excluded.transcript", (audio_id, file, '', 'pending'))
-    connection.commit()
-    print(file, 'added to database')
 
 def process_file(file):
-  add_to_db(file)
+  if file.endswith('.mp3'):
+    audio_id, program_slug, release_date, audio_url = get_audio_metadata(file)
+    add_episode_to_db(audio_id, file)
+    gql_create_episode_and_publish(audio_id, program_slug, release_date, audio_url, "")  
 
 def move_to_processed(file):
   if file.endswith('.mp3'):

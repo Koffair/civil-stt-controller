@@ -1,16 +1,13 @@
 # main.py
 from dotenv import load_dotenv
 import os
-import sqlite3
 import sched, time
 from checkdir import check_dir
-from process_transcript import process_transcript
+from functions import get_audio_metadata
+from graphql_service import gql_update_episode_transcript_and_publish
+from db_service import update_transcript_in_db
 
 load_dotenv()
-
-connection = sqlite3.connect("transcripts.sqlite")
-cursor = connection.cursor()
-connection.commit()
 
 def read_textfile(file):
   src_fpath = os.getenv('OUTPUT_FOLDER') + '/' + file
@@ -19,25 +16,13 @@ def read_textfile(file):
   f.close()
   return content
 
-def get_audio_id(file):
-  audio_id = os.path.splitext(file)[0]
-  return audio_id
-
-def update_transcript_in_db(audio_id, transcript):
-  cursor.execute("INSERT INTO transcripts (audio_id, transcript, status) VALUES (?, ?, ?) ON CONFLICT(audio_id) DO UPDATE SET transcript = excluded.transcript, status = excluded.status", (audio_id, transcript, 'done'))
-  connection.commit()
-  print(audio_id, 'transcript updated in database')
-
-def get_audio_url(audio_id):
-  return os.getenv('AUDIO_BASE_URL') + '/' + audio_id + '.mp3'
 
 def process_file(file):
   if file.endswith('.txt'):
-    audio_id = get_audio_id(file)
+    audio_id, program_slug, release_date, audio_url = get_audio_metadata(file)
     transcript = read_textfile(file)
-    audio_url = get_audio_url(audio_id)
     update_transcript_in_db(audio_id, transcript)
-    process_transcript(audio_id, transcript, audio_url)
+    gql_update_episode_transcript_and_publish(audio_id, transcript)
 
 def remove_text_file(file):
   if file.endswith('.txt'):
