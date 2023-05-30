@@ -10,8 +10,6 @@ from graphql_service import gql_create_episode_and_publish
 
 load_dotenv()
 
-
-
 def process_file(file):
   if file.endswith('.mp3'):
     audio_id, program_slug, release_date, audio_url = get_audio_metadata(file)
