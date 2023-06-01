@@ -22,7 +22,7 @@ def process_file(file):
     audio_id, program_slug, release_date, audio_url = get_audio_metadata(file)
     transcript = read_textfile(file)
     update_transcript_in_db(audio_id, transcript)
-    gql_update_episode_transcript_and_publish(audio_id, transcript)
+    gql_update_episode_transcript_and_publish(audio_id, transcript=transcript)
 
 def remove_text_file(file):
   if file.endswith('.txt'):

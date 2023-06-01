@@ -49,16 +49,16 @@ def create_episode(audio_id, program_slug, release_date, audio_url, transcript =
   }
   return mutate(mutation, variables)
 
-def publish_episode(episode_id):
+def publish_episode(audio_id):
   mutation = """
-    mutation publishEpisode($episodeId: ID) {
-      publishEpisode(where: { id: $episodeId }, to: PUBLISHED) {
-        id
+    mutation publishEpisode($audioId: String) {
+      publishEpisode(where: { audioId: $audioId }, to: PUBLISHED) {
+        audioId
       }
     }
   """
   variables = {
-    "episodeId": episode_id
+    "audioId": audio_id
   }
   return mutate(mutation, variables)
 
@@ -82,11 +82,10 @@ def update_transcript(audio_id, transcript):
   return mutate(mutation, variables)
 
 def gql_create_episode_and_publish(audio_id, program_slug, release_date, audio_url, transcript = ""):
-  data = create_episode(audio_id, program_slug, release_date, audio_url, transcript)
-  episode_id = data['data']['createEpisode']['id']
-  publish_episode(episode_id)
+  create_episode(audio_id, program_slug, release_date, audio_url, transcript)
+  publish_episode(audio_id)
 
-def gql_update_episode_transcript_and_publish(episode_id, transcript):
+def gql_update_episode_transcript_and_publish(audio_id, transcript):
+  update_transcript(audio_id, transcript)
+  publish_episode(audio_id)
   print('gql_update_episode_transcript_and_publish')
-  update_transcript(episode_id, transcript)
-  publish_episode(episode_id)
