@@ -11,3 +11,4 @@ pyvenv.cfg
 *.db-journal
 *.sqlite
 *.pyc
+.DS_Store
