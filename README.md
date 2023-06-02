@@ -23,11 +23,16 @@ The filenames of the MP3 audio files contain important metadata, including the s
    - `INPUT_FOLDER`: Path to the folder where incoming MP3 files are placed.
    - `PROCESSING_FOLDER`: Path to the folder where files are moved for processing.
    - `OUTPUT_FOLDER`: Path to the folder where the STT-generated transcripts are stored.
-3. Install the required dependencies by running the following command:
+3. Open a terminal window and start the virtual environment with the following command: 
+```
+cd stt-py-env
+source bin/activate
+```
+5. Install the required dependencies by running the following command:
    ```
    pip install -r requirements.txt
    ```
-4. Start the input watcher by running the following command:
+6. Start the input watcher by running the following command:
    ```
    python inputwatch.py
    ```
@@ -36,7 +41,7 @@ The filenames of the MP3 audio files contain important metadata, including the s
    python3 inputwatch.py
    ```
    This will begin monitoring the designated input folder for incoming MP3 files. When a new file arrives, it will be moved to the processing folder, a processing record will be added to the local SQLite database, and the metadata will be updated in the remote hygraph CMS.
-5. Start the output watcher by running the following command:
+7. Start the output watcher by running the following command:
    ```
    python outputwatch.py
    ```
