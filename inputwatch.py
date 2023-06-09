@@ -17,7 +17,7 @@ def process_file(file):
     gql_create_episode_and_publish(audio_id, program_slug, release_date, audio_url, "")  
     print(file, 'added to gql db')
     move_or_copy_file(os.getenv('INPUT_FOLDER'), os.getenv('AUDIO_PUBLIC_FOLDER'), file, True)
-    print(file, 'moved to public folder')
+    print(file, 'copied to public folder')
 
 
 def move_to_processed(file):
