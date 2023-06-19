@@ -6,31 +6,64 @@ def mutate(mutation, variables):
   token = os.getenv("HYGRAPH_TOKEN")
   headers = {"Authorization": f"Bearer {token}"}
 
-  r = requests.post(url, json={"query": mutation, "variables": variables}, headers=headers)
-  json_data = r.json()
-  # print(json_data)
-  return json_data
+  try:
+    r = requests.post(url, json={"query3623": mutation, "variables": variables}, headers=headers)
+    json_data = r.json()
+
+    r.raise_for_status()
+    return json_data
+  
+  except requests.exceptions.HTTPError as error: 
+    print("HTTPError error", error)
+    raise str(error)
+  except requests.exceptions.ConnectionError as error:
+    print("ConnectionError", error)
+    raise error
+  except requests.exceptions.Timeout:
+    print("Timeout error", error)
+    raise error
+  except requests.exceptions.TooManyRedirects:
+    print("TooManyRedirects error", error)
+    raise error
+  except requests.exceptions.RequestException as e:
+    print("RequestException(catastrophic) error", error)
+    raise error
 
 
 def create_episode(audio_id, program_slug, release_date, audio_url, transcript = ""):
   mutation = """
-    mutation CreateEpisode(
+    mutation upsertEpisode(
       $transcript: String,
       $programSlug: String,
       $releaseDate: Date,
       $audioUrl: String,
       $audioId: String
     ) {
-      createEpisode(data: {
-        transcript: $transcript
-        program: {
-          connect: {
-            slug: $programSlug
+      upsertEpisode(
+        where:{ audioId: $audioId },
+        upsert: {
+          create: {
+            transcript: $transcript
+            program: {
+              connect: {
+                slug: $programSlug
+              }
+            }
+            releaseDate: $releaseDate,
+            audioUrl: $audioUrl,
+            audioId: $audioId
+          },
+          update: {
+            transcript: $transcript
+            program: {
+              connect: {
+                slug: $programSlug
+              }
+            }
+            releaseDate: $releaseDate,
+            audioUrl: $audioUrl,
+            audioId: $audioId
           }
-        }
-        releaseDate: $releaseDate,
-        audioUrl: $audioUrl,
-        audioId: $audioId
       }) {
         id
         program {

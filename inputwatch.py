@@ -13,12 +13,17 @@ load_dotenv()
 def process_file(file):
   if file.endswith('.mp3'):
     audio_id, program_slug, release_date, audio_url = get_audio_metadata(file)
-    add_episode_to_db(audio_id, file)
-    gql_create_episode_and_publish(audio_id, program_slug, release_date, audio_url, "")  
-    print(file, 'added to gql db')
-    move_or_copy_file(os.getenv('INPUT_FOLDER'), os.getenv('AUDIO_PUBLIC_FOLDER'), file, True)
-    print(file, 'copied to public folder')
-
+    try:
+      if program_slug == "" or release_date == "":
+        raise Exception("File name was incorrect")
+      
+      add_episode_to_db(audio_id, file)
+      gql_create_episode_and_publish(audio_id, program_slug, release_date, audio_url, "")  
+      print(file, 'added to gql db')
+      move_or_copy_file(os.getenv('INPUT_FOLDER'), os.getenv('AUDIO_PUBLIC_FOLDER'), file, True)
+      print(file, 'copied to public folder')
+    except: 
+      print("An exception occurred")
 
 def move_to_processed(file):
   if file.endswith('.mp3'):
