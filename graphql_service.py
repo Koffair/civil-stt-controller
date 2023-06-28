@@ -1,5 +1,6 @@
 import os
 import requests
+import exceptions
 
 def mutate(mutation, variables):
   url=os.getenv('HYGRAPH_URL')
@@ -7,27 +8,26 @@ def mutate(mutation, variables):
   headers = {"Authorization": f"Bearer {token}"}
 
   try:
-    r = requests.post(url, json={"query3623": mutation, "variables": variables}, headers=headers)
+    r = requests.post(url, json={"query23515": mutation, "variables": variables}, headers=headers)
     json_data = r.json()
 
     r.raise_for_status()
     return json_data
   
   except requests.exceptions.HTTPError as error: 
-    print("HTTPError error", error)
-    raise str(error)
+    raise exceptions.CustomException("HTTPError error " + str(error))
+  
   except requests.exceptions.ConnectionError as error:
-    print("ConnectionError", error)
-    raise error
-  except requests.exceptions.Timeout:
-    print("Timeout error", error)
-    raise error
-  except requests.exceptions.TooManyRedirects:
-    print("TooManyRedirects error", error)
-    raise error
-  except requests.exceptions.RequestException as e:
-    print("RequestException(catastrophic) error", error)
-    raise error
+    raise exceptions.CustomException("ConnectionError" + str(error))
+  
+  except requests.exceptions.Timeout as error:
+    raise exceptions.CustomException("Timeout error" + str(error))
+  
+  except requests.exceptions.TooManyRedirects as error:
+    raise exceptions.CustomException("TooManyRedirects error" + str(error))
+  
+  except requests.exceptions.RequestException as error:
+    raise exceptions.CustomException("RequestException(catastrophic) error" + str(error))
 
 
 def create_episode(audio_id, program_slug, release_date, audio_url, transcript = ""):
@@ -115,10 +115,17 @@ def update_transcript(audio_id, transcript):
   return mutate(mutation, variables)
 
 def gql_create_episode_and_publish(audio_id, program_slug, release_date, audio_url, transcript = ""):
-  create_episode(audio_id, program_slug, release_date, audio_url, transcript)
-  publish_episode(audio_id)
+  try:
+    create_episode(audio_id, program_slug, release_date, audio_url, transcript)
+    publish_episode(audio_id)
+  except Exception as error:
+    raise exceptions.CustomException(str(error))
 
 def gql_update_episode_transcript_and_publish(audio_id, transcript):
-  update_transcript(audio_id, transcript)
-  publish_episode(audio_id)
-  print('gql_update_episode_transcript_and_publish')
+  try:
+    update_transcript(audio_id, transcript)
+    publish_episode(audio_id)
+    print('gql_update_episode_transcript_and_publish')
+  except Exception as error:
+    print(error)
+    raise exceptions.CustomException(str(error))
