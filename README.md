@@ -19,19 +19,22 @@ The filenames of the MP3 audio files contain important metadata, including the s
 ## How to Use
 
 1. Clone the repository to your local machine.
-2. Configure the necessary environment variables in the `.env` file:
+2. Go up to the parent folder of the cloned reposity with `cd ..` and create a virtual env folder by `mkdir venv` then execute the virtual env creation with `python -m venv venv/`.
+3. Activeate the virtual env by `source venv/bin/activate` command
+4. Go back to the project folder by `cd civic-stt-controller` and install the required dependencies by running the following command:
+   ```
+   pip install -r requirements.txt
+   ```
+5. Configure the necessary environment variables in the `.env` file:
    - `INPUT_FOLDER`: Path to the folder where incoming MP3 files are placed.
    - `PROCESSING_FOLDER`: Path to the folder where files are moved for processing.
    - `OUTPUT_FOLDER`: Path to the folder where the STT-generated transcripts are stored.
-3. Open a terminal window and start the virtual environment with the following command: 
+6. Open a terminal window and start the virtual environment with the following command: 
 ```
 cd stt-py-env
 source bin/activate
 ```
-5. Install the required dependencies by running the following command:
-   ```
-   pip install -r requirements.txt
-   ```
+
 6. Start the input watcher by running the following command:
    ```
    python inputwatch.py
