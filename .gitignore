@@ -12,6 +12,3 @@ pyvenv.cfg
 *.sqlite
 *.pyc
 .DS_Store
-speech-to-text
-public-audio
-Scripts
