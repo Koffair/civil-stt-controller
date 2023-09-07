@@ -11,7 +11,7 @@ cursor = connection.cursor()
 app = FastAPI()
 @app.get("/")
 async def root():
-  rows = cursor.execute("SELECT audio_id, audio_file, transcript, status FROM transcripts").fetchall()
+  rows = cursor.execute("SELECT audio_id, audio_file, transcript, status, error_message FROM transcripts").fetchall()
   return rows
 
 
