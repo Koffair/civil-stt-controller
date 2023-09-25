@@ -8,9 +8,11 @@ def mutate(mutation, variables):
   headers = {"Authorization": f"Bearer {token}"}
 
   try:
-    r = requests.post(url, json={"query23515": mutation, "variables": variables}, headers=headers)
+    r = requests.post(url, json={"query": mutation, "variables": variables}, headers=headers)
     json_data = r.json()
-
+    print("MUTATioN", mutation)
+    print("vas: ---------", variables)
+    print(json_data)
     r.raise_for_status()
     return json_data
   
